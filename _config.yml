@@ -1,0 +1,10 @@
+collections:
+  journal:
+    output: true
+    permalink: /journal/:name/
+defaults:
+  - scope:
+      path: ""
+      type: journal
+    values:
+      layout: default
