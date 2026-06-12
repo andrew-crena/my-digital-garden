@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Digital Gardener — Write-Through Edition</title>
+<!-- Rebuild the PDF after editing:
+     wkhtmltopdf -s Letter -T 11mm -B 11mm -L 13mm -R 13mm gardeners-worksheet.html gardeners-worksheet.pdf
+     (or just open in a browser and print to PDF at Letter size, default margins off) -->
+<style>
+  /* Built for wkhtmltopdf (old WebKit): tables + blocks, pt units, no flexbox/vars. */
+  body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 9pt; line-height: 1.45; color: #1c2433; margin: 0; }
+  .sheet1 { page-break-after: always; }
+
+  /* Header band — slim, low ink */
+  .band { background: #0a2540; color: #ffffff; border-radius: 7pt; padding: 8pt 14pt; margin-bottom: 9pt; }
+  .band table { width: 100%; border-collapse: collapse; }
+  .band td { border: none; padding: 0; vertical-align: middle; }
+  .band .t1 { font-size: 13pt; font-weight: bold; letter-spacing: .5pt; }
+  .band .t2 { color: #aab8d0; font-size: 7.5pt; letter-spacing: 2.5pt; text-transform: uppercase; }
+  .band .pg { text-align: right; color: #7c6af7; font-size: 8pt; font-weight: bold; }
+
+  .lede { font-size: 9pt; color: #3c3c64; margin: 0 1pt 11pt 1pt; }
+  .lede b { color: #0a2540; }
+
+  /* Section eyebrow */
+  .sec { color: #5847d6; font-size: 8pt; font-weight: bold; letter-spacing: 2.2pt; text-transform: uppercase; border-bottom: 1.4pt solid #7c6af7; padding-bottom: 2.5pt; margin: 13pt 0 7pt 0; }
+  .sec .why { float: right; color: #8a92a6; font-weight: normal; letter-spacing: 0; text-transform: none; font-size: 7.6pt; }
+
+  /* Pipeline strip */
+  .pipeline { width: 100%; border-collapse: collapse; margin: 2pt 0 4pt 0; }
+  .pipeline td { border: none; text-align: center; padding: 1pt; }
+  .pipebox { background: #0a2540; color: #ffffff; border-radius: 6pt; padding: 9pt 3pt; font-size: 8.4pt; font-weight: bold; }
+  .pipebox small { display: block; font-weight: normal; color: #aab8d0; font-size: 7pt; margin-top: 2pt; }
+  .arrow { color: #7c6af7; font-size: 11pt; font-weight: bold; width: 14pt; }
+
+  /* Privacy strip */
+  .warn { background: #fdefee; border-left: 3pt solid #d4373e; border-radius: 0 5pt 5pt 0; padding: 7pt 10pt; font-size: 8.4pt; margin: 9pt 0 0 0; }
+  .warn b { color: #b02a30; }
+
+  /* Fill-in card */
+  .card { background: #f4f5fa; border: 1pt solid #d9dde8; border-radius: 7pt; padding: 11pt 13pt 8pt 13pt; }
+  .card table { width: 100%; border-collapse: collapse; }
+  .card td { border: none; padding: 4pt 0; vertical-align: bottom; }
+  .card .lbl { width: 96pt; font-size: 8.6pt; font-weight: bold; color: #0a2540; padding-right: 8pt; padding-bottom: 4pt; vertical-align: bottom; }
+  .card .wl { border-bottom: 1pt solid #9aa3b8; height: 20pt; }
+  .card .hint { font-size: 7.4pt; color: #8a92a6; padding: 1pt 0 7pt 0; font-family: 'DejaVu Sans Mono', monospace; }
+
+  /* Protocol table */
+  .proto { width: 100%; border-collapse: collapse; }
+  .proto td { border: none; padding: 7pt 0; vertical-align: bottom; border-bottom: .6pt dotted #d9dde8; }
+  .proto tr.last td { border-bottom: none; }
+  .num { display: inline-block; width: 13pt; height: 13pt; line-height: 13pt; text-align: center; background: #7c6af7; color: #ffffff; border-radius: 7pt; font-size: 8pt; font-weight: bold; margin-right: 5pt; }
+  .step { width: 218pt; padding-right: 12pt !important; }
+  .step .nm { font-size: 9pt; font-weight: bold; color: #0a2540; }
+  .step .cmd { display: block; font-family: 'DejaVu Sans Mono', Consolas, monospace; font-size: 9pt; color: #4b3bbd; background: #eef0f7; border-radius: 3pt; padding: 3.5pt 7pt; margin: 3pt 0 0 18pt; }
+  .step .sub { display: block; font-size: 7.8pt; color: #6a7287; margin: 2pt 0 0 18pt; }
+  .write { vertical-align: bottom; }
+  .write .wl { border-bottom: 1pt solid #b9c0d2; height: 26pt; }
+  .write .cap { font-size: 6.8pt; color: #a3aabb; text-align: right; padding-top: 1.5pt; }
+  .after { font-size: 8.6pt; color: #3c3c64; background: #eef3fd; border-left: 3pt solid #3563d9; border-radius: 0 5pt 5pt 0; padding: 7pt 10pt; margin-top: 10pt; }
+
+  /* Two-column tables (markdown + commands) */
+  .ref { width: 100%; border-collapse: collapse; }
+  .ref th { background: #0a2540; color: #ffffff; text-align: left; font-size: 7.8pt; padding: 5pt 8pt; }
+  .ref td { border: 1pt solid #d9dde8; padding: 4.5pt 8pt; font-size: 8.8pt; vertical-align: middle; }
+  .ref td.c { font-family: 'DejaVu Sans Mono', Consolas, monospace; font-size: 8.6pt; color: #4b3bbd; white-space: nowrap; }
+
+  /* Practice + log lines */
+  .prax { width: 100%; border-collapse: collapse; margin-top: 2pt; }
+  .prax td { border: none; padding: 5pt 0; vertical-align: bottom; }
+  .prax .p { width: 158pt; font-size: 8.8pt; color: #0a2540; font-weight: bold; padding-right: 10pt; padding-bottom: 7pt; }
+  .prax .wl { border-bottom: 1pt solid #b9c0d2; height: 22pt; }
+
+  .log { width: 100%; border-collapse: collapse; }
+  .log td { border: none; padding: 5.5pt 0; vertical-align: bottom; }
+  .log .d { width: 64pt; padding-right: 10pt; }
+  .log .d .wl { border-bottom: 1pt solid #b9c0d2; height: 20pt; }
+  .log .d .cap, .log .w .cap { font-size: 6.8pt; color: #a3aabb; padding-top: 1.5pt; }
+  .log .w .wl { border-bottom: 1pt solid #b9c0d2; height: 20pt; }
+
+  .foot { margin-top: 14pt; padding-top: 6pt; border-top: 1pt solid #d9dde8; color: #8a92a6; font-size: 7.2pt; text-align: center; }
+  .foot a { color: #5847d6; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 ================= -->
+<div class="sheet1">
+
+<div class="band">
+  <table><tr>
+    <td>
+      <div class="t2">Local-first publishing &middot; Write-through edition</div>
+      <div class="t1">The Digital Gardener</div>
+    </td>
+    <td class="pg">PAGE 1 / 2</td>
+  </tr></table>
+</div>
+
+<div class="lede"><b>Print me. Keep me next to the keyboard. Write on me.</b> A command your hand has written is a command you own — trace each one below in pen, fill in your garden's details, and log what you plant.</div>
+
+<div class="sec">The whole system on one line</div>
+<table class="pipeline"><tr>
+  <td><div class="pipebox">IDEA<small>in your head</small></div></td>
+  <td class="arrow">&rarr;</td>
+  <td><div class="pipebox">WRITE<small>a .md file</small></div></td>
+  <td class="arrow">&rarr;</td>
+  <td><div class="pipebox">COMMIT<small>snapshot it</small></div></td>
+  <td class="arrow">&rarr;</td>
+  <td><div class="pipebox">PUSH<small>send to GitHub</small></div></td>
+  <td class="arrow">&rarr;</td>
+  <td><div class="pipebox">LIVE URL<small>~60 seconds</small></div></td>
+</tr></table>
+<div class="warn"><b>The garden is public.</b> Everything you push — and its entire edit history — is visible to anyone on the internet, forever-ish. Journal accordingly. (Manual, Ch.&nbsp;7)</div>
+
+<div class="sec">My garden <span class="why">fill these in once, in pen</span></div>
+<div class="card">
+  <table>
+    <tr><td class="lbl">Local folder</td><td><div class="wl"></div></td></tr>
+    <tr><td></td><td class="hint">e.g.&nbsp; C:\Users\you\Documents\my-digital-garden</td></tr>
+    <tr><td class="lbl">Repository</td><td><div class="wl"></div></td></tr>
+    <tr><td></td><td class="hint">github.com/andrew-crena/my-digital-garden</td></tr>
+    <tr><td class="lbl">Live site</td><td><div class="wl"></div></td></tr>
+    <tr><td></td><td class="hint">https://andrew-crena.github.io/my-digital-garden/</td></tr>
+  </table>
+</div>
+
+<div class="sec">The daily publishing protocol <span class="why">copy each command by hand &rarr;</span></div>
+<table class="proto">
+  <tr>
+    <td class="step"><span class="num">1</span><span class="nm">Open the garden</span><span class="cmd">cd  &lt;your local folder&gt;</span><span class="sub">in Terminal / PowerShell — use the path you wrote above</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">write it with your real path</div></td>
+  </tr>
+  <tr>
+    <td class="step"><span class="num">2</span><span class="nm">Plant a note</span><span class="cmd">notes/2026-06-11-my-idea.md</span><span class="sub">new file in your editor &mdash; date first, dashes-not-spaces</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">write today&rsquo;s filename</div></td>
+  </tr>
+  <tr>
+    <td class="step"><span class="num">3</span><span class="nm">Check what changed</span><span class="cmd">git status</span><span class="sub">your new file should appear in red</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">copy the command</div></td>
+  </tr>
+  <tr>
+    <td class="step"><span class="num">4</span><span class="nm">Stage everything</span><span class="cmd">git add .</span><span class="sub">the dot means &ldquo;all of it&rdquo;</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">copy the command</div></td>
+  </tr>
+  <tr>
+    <td class="step"><span class="num">5</span><span class="nm">Commit a snapshot</span><span class="cmd">git commit -m "plant: what changed"</span><span class="sub">the message is a note to future-you</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">copy it, message included</div></td>
+  </tr>
+  <tr class="last">
+    <td class="step"><span class="num">6</span><span class="nm">Publish</span><span class="cmd">git push</span><span class="sub">sends it to GitHub &rarr; Pages rebuilds the site</span></td>
+    <td class="write"><div class="wl"></div><div class="cap">copy the command</div></td>
+  </tr>
+</table>
+<div class="after"><b>Then:</b> wait ~60 seconds &rarr; open your live URL &rarr; if it looks stale, hard-refresh with <b>Ctrl+Shift+R</b> (Cmd+Shift+R on Mac).</div>
+
+</div>
+
+<!-- ================= PAGE 2 ================= -->
+<div>
+
+<div class="band">
+  <table><tr>
+    <td>
+      <div class="t2">Local-first publishing &middot; Write-through edition</div>
+      <div class="t1">The Digital Gardener</div>
+    </td>
+    <td class="pg">PAGE 2 / 2</td>
+  </tr></table>
+</div>
+
+<div class="sec">Markdown — the writing layer</div>
+<table class="ref">
+  <tr><th style="width:46%">You type&hellip;</th><th>&hellip;you get</th></tr>
+  <tr><td class="c"># Big title &nbsp;&middot;&nbsp; ## Section</td><td>Headings (one <span style="font-family:'DejaVu Sans Mono',monospace">#</span> per level down)</td></tr>
+  <tr><td class="c">**bold** &nbsp;&middot;&nbsp; *italic*</td><td><b>bold</b> and <i>italic</i> text</td></tr>
+  <tr><td class="c">[label](https://url)</td><td>a link</td></tr>
+  <tr><td class="c">![alt text](images/photo.jpg)</td><td>an image (path is inside the repo)</td></tr>
+  <tr><td class="c">- item &nbsp;&middot;&nbsp; 1. item</td><td>bullet / numbered lists</td></tr>
+  <tr><td class="c">`code` &nbsp;&middot;&nbsp; ``` ... ```</td><td>inline code / code block</td></tr>
+  <tr><td class="c">---</td><td>a horizontal divider</td></tr>
+</table>
+
+<div class="sec">Practice strokes <span class="why">muscle memory, in ink</span></div>
+<table class="prax">
+  <tr><td class="p">A heading + one bold word</td><td><div class="wl"></div></td></tr>
+  <tr><td class="p">A link to your live site</td><td><div class="wl"></div></td></tr>
+  <tr><td class="p">An image embed</td><td><div class="wl"></div></td></tr>
+</table>
+
+<div class="sec">Command reference card</div>
+<table class="ref">
+  <tr><th style="width:46%">Command</th><th>What it does</th></tr>
+  <tr><td class="c">git status</td><td>What changed since my last snapshot?</td></tr>
+  <tr><td class="c">git add .</td><td>Stage every change for the next snapshot</td></tr>
+  <tr><td class="c">git commit -m "msg"</td><td>Take the snapshot, labeled</td></tr>
+  <tr><td class="c">git push</td><td>Publish snapshots to GitHub (goes live)</td></tr>
+  <tr><td class="c">git pull</td><td>Bring down edits made elsewhere &mdash; run this first if push is rejected</td></tr>
+  <tr><td class="c">git log --oneline</td><td>The garden&rsquo;s history, one line per snapshot</td></tr>
+</table>
+
+<div class="sec">When it breaks</div>
+<table class="ref">
+  <tr><td style="width:46%"><b>Pushed, but the site didn&rsquo;t change</b></td><td>Wait 1&ndash;2 min &middot; hard-refresh (<b>Ctrl+Shift+R</b>) &middot; check the file arrived on github.com</td></tr>
+  <tr><td><b>404 on a page</b></td><td>Filename and CAPITALS must match the URL exactly &middot; use-dashes-not-spaces.md</td></tr>
+  <tr><td><b><span style="font-family:'DejaVu Sans Mono',monospace">git push</span> rejected</b></td><td>Run <span style="font-family:'DejaVu Sans Mono',monospace;color:#4b3bbd">git pull</span> first, then push again</td></tr>
+</table>
+
+<div class="sec">Planting log <span class="why">date &middot; what went live</span></div>
+<table class="log">
+  <tr><td class="d"><div class="wl"></div></td><td class="w"><div class="wl"></div></td></tr>
+  <tr><td class="d"><div class="wl"></div></td><td class="w"><div class="wl"></div></td></tr>
+  <tr><td class="d"><div class="wl"></div></td><td class="w"><div class="wl"></div></td></tr>
+  <tr><td class="d"><div class="wl"></div></td><td class="w"><div class="wl"></div></td></tr>
+  <tr><td class="d"><div class="wl"></div></td><td class="w"><div class="wl"></div></td></tr>
+</table>
+
+<div class="foot">Companion to <b>The Digital Gardener&rsquo;s Manual</b> v1.0 &middot; full chapters at <a href="https://andrew-crena.github.io/my-digital-garden/">andrew-crena.github.io/my-digital-garden</a></div>
+
+</div>
+
+</body>
+</html>
