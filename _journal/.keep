@@ -7,6 +7,10 @@ nav: true
 
 Daily notes (reading, ideas, progress). Newest first.
 
+
+keep
+
+
 <ul>
   {% assign entries = site.journal | sort: "date" | reverse %}
   {% for e in entries %}
