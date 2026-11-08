@@ -1,48 +1,29 @@
 ---
-layout: default
-title: Home
-permalink: /
+title: Notes
 ---
 
-# Andrew Crena's Digital Garden
+# Notes
 
-Welcome! This is my space for research, ideas, and projects.
+Working notes from [Andrew Crena](https://andrew-crena.github.io/). **Ideas** are research questions I keep revising, each with a record of how it has changed. The **journal** is informal and dated: reading, conversations, and things I noticed.
 
----
+## Ideas
 
-## 🎓 Research
+{% assign ideas = site.ideas | sort: "updated" | reverse %}
+{% if ideas.size > 0 %}
+<ul class="entries">
+{% for i in ideas limit: 5 %}<li><a href="{{ i.url | relative_url }}">{{ i.title }}</a>{% if i.status %} <span class="meta">({{ i.status }})</span>{% endif %}</li>
+{% endfor %}</ul>
+{% else %}
+Nothing here yet.
+{% endif %}
 
-### Awe & Social Psychology
-I'm interested in how awe experiences—particularly through art, music, and collective contexts—shape social outcomes like prosociality, bonding, and group identification.
+## Recent journal entries
 
-**Current focus:** Preparing for grad school applications in social psychology (labs: Keltner, Piff, Stellar, Gabriel)
-
-📚 **[Weekly Awe Research Regimen](awe-research-regimen.md)** - My systematic approach to mastering the awe literature
-
----
-
-## 📝 Writing & Notes
-
-- **[Blog](blog.md)** - Thoughts and reflections
-- **[Journal](journal.md)** - Personal notes and observations
-- **[Projects](projects.md)** - Current and past work
-
----
-
-## 🔗 Quick Links
-
-- [Research Methods & Templates](awe-research-regimen.md#your-tracking-system)
-- [Weekly Schedule](awe-research-regimen.md#your-weekly-schedule-75-hours-total)
-- [Sample Study Ideas](awe-research-regimen.md#sample-study-ideas)
-
----
-
-## 📬 Connect
-
-- GitHub: [@andrew-crena](https://github.com/andrew-crena)
-- Email: [your-email]
-- [LinkedIn/Twitter/etc.]
-
----
-
-*Last updated: January 2025*
+{% assign entries = site.journal | sort: "date" | reverse %}
+{% if entries.size > 0 %}
+<ul class="entries">
+{% for e in entries limit: 5 %}<li>{{ e.date | date: "%b %-d, %Y" }}: <a href="{{ e.url | relative_url }}">{{ e.title }}</a></li>
+{% endfor %}</ul>
+{% else %}
+Nothing here yet.
+{% endif %}

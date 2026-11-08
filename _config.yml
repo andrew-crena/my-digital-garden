@@ -1,10 +1,26 @@
+title: Notes · Andrew Crena
+url: https://andrew-crena.github.io
+baseurl: /my-digital-garden
+markdown: kramdown
+kramdown:
+  input: GFM
+
 collections:
+  ideas:
+    output: true
+    permalink: /ideas/:name.html
   journal:
     output: true
-    permalink: /journal/:name/
+    permalink: /journal/:name.html
+
 defaults:
-  - scope:
-      path: ""
-      type: journal
-    values:
-      layout: default
+  - scope: { path: "", type: ideas }
+    values: { layout: idea }
+  - scope: { path: "", type: journal }
+    values: { layout: entry }
+  - scope: { path: "" }
+    values: { layout: default }
+
+exclude:
+  - README.md
+  - templates

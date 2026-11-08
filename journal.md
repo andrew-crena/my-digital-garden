@@ -1,20 +1,16 @@
 ---
 title: Journal
-nav: true
 ---
 
 # Journal
 
-Daily notes (reading, ideas, progress). Newest first.
+Informal, dated entries. Newest first.
 
-<ul>
-  {% assign entries = site.journal | sort: "date" | reverse %}
-  {% for e in entries %}
-    <li>
-      <a href="{{ e.url | relative_url }}">
-        {{ e.date | date: "%Y-%m-%d" }} — {{ e.title | default: "Entry" }}
-      </a>
-      {% if e.tags %}<small> ({{ e.tags | join: ", " }})</small>{% endif %}
-    </li>
-  {% endfor %}
-</ul>
+{% assign entries = site.journal | sort: "date" | reverse %}
+{% if entries.size > 0 %}
+<ul class="entries">
+{% for e in entries %}<li>{{ e.date | date: "%b %-d, %Y" }}: <a href="{{ e.url | relative_url }}">{{ e.title }}</a></li>
+{% endfor %}</ul>
+{% else %}
+Nothing here yet.
+{% endif %}

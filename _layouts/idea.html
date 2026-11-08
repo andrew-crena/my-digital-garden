@@ -1,0 +1,8 @@
+---
+layout: default
+---
+<article>
+  <h1>{{ page.title }}</h1>
+  <p class="meta">{% if page.status %}Status: {{ page.status }} · {% endif %}{% if page.updated %}Last revised {{ page.updated | date: "%B %-d, %Y" }}{% endif %}</p>
+  {{ content }}
+</article>
